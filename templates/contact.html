@@ -1,0 +1,35 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="wrapper">
+    <div class="info">
+        <h3>Konrad Kadzielawa</h3>
+        <ul>
+            <li>221 W. Hubbard St, Chicago IL 60654</li>
+            <li>(608)-772-8855</li>
+        </ul>
+    </div>
+    <div class="contact">
+        <h3>Email Me</h3>
+        <form action="">
+            <p>
+                <label>Name: </label>
+                <input type="text" name="name">
+            </p>
+            <p>
+                <label>Email Address: </label>
+                <input type="email" name="email">
+            </p>
+            <p>
+                <label>Phone: </label>
+                <input type="text" name="phone">
+            </p>
+            <p>
+                <label>Message: </label>
+                <textarea name="message" cols="30" rows="10"></textarea>
+            </p>
+            <p><button>Submit</button></p>
+        </form>
+    </div>
+
+</div>
+{% endblock content %}

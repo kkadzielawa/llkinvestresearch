@@ -1,0 +1,19 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<!-- Showcase -->
+<header class="showcase">
+    <video class="video" src="{% static 'img/splash_video.mp4' %}" muted loop autoplay playsinline></video>
+    <h2>Deep look into investment world</h2>
+    <a href="{% url 'blog' %}" class="btn">Enter Here <i class="fas fa-chevron-right"></i></a>
+</header>
+
+<!-- <section class="about-me">
+            <h1 class="title">About Me</h1>
+            <div class="txt-img">
+                <p>My name is Konrad Kadzielawa. I am currently employed as a Senior Analyst at Epsilon, a digital advertising company. My main interests lie at the intersection of data science & finance. This site is meant to provide readers with a variety
+                    of investment strategies, my personal analysis, analytic tools etc. in order to enable a retail investor, as you and I, to make wiser investment choices.
+                </p>
+                <img src="/img/personal_photo.png" alt="">
+            </div>
+        </section> -->
+{% endblock content %}
