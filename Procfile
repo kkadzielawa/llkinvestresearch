@@ -1,1 +1,0 @@
-web: gunicorn llkinvestresearch.wsgi --log-file -
