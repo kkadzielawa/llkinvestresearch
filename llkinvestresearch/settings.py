@@ -11,21 +11,22 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '7r#5zdq!%1$z45gv#6m-hgc_*pi^cx4@0&zqre5xq6$57$s@pu'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
 
-ALLOWED_HOSTS = ['llkinvestresearch.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
 
 
 # Application definition
