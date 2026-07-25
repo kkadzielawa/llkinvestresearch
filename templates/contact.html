@@ -1,31 +1,47 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
 
-<div class="wrapper">
-    <div class="info">
-        <h3>Konrad Kadzielawa</h3>
-    </div>
-    <div class="contact">
-        <h3>Email Me</h3>
-        <form action="">
-            <p>
-                <label>Name: </label>
-                <input type="text" name="name">
-            </p>
-            <p>
-                <label>Email Address: </label>
-                <input type="email" name="email">
-            </p>
-            <p>
-                <label>Phone: </label>
-                <input type="text" name="phone">
-            </p>
-            <p>
-                <label>Message: </label>
-                <textarea name="message" cols="30" rows="10"></textarea>
-            </p>
-            <p><button>Submit</button></p>
+{% block content %}
+  <section class="page-shell">
+    <div class="content-wide contact-layout">
+      <div class="contact-copy">
+        <p class="eyebrow">Contact</p>
+        <h1>Konrad Kadzielawa</h1>
+        <p class="contact-role">Investment Researcher</p>
+        <p>
+          Use the form to reach out about research, collaboration, or a market question worth exploring.
+        </p>
+        <div class="contact-bio">
+          <p>
+            I write independent market notes across macro, digital assets, commodities, and options strategy,
+            with an emphasis on clear structure, risk framing, and decision-useful analysis.
+          </p>
+          <p>
+            This site is built as a working research desk: a place for long-form ideas, sharper single-name views,
+            and tools that help translate market noise into something more actionable.
+          </p>
+        </div>
+      </div>
+
+      <div class="contact-form-wrap">
+        <form method="post" class="contact-form">
+          {% csrf_token %}
+          {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          {% for field in form %}
+            <div class="form-field">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}
+                <div class="field-error">{{ field.errors|join:", " }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <button type="submit" class="btn btn-primary">Send message</button>
         </form>
+      </div>
     </div>
-
-</div>
+  </section>
 {% endblock content %}
