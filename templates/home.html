@@ -1,19 +1,78 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %}
+{% load static %}
 
-<!-- Showcase -->
-<header class="showcase">
-    <video class="video" src="{% static 'img/splash_video.mp4' %}" muted loop autoplay playsinline></video>
-    <h2>Deep look into investment world</h2>
-    <a href="{% url 'blog' %}" class="btn">Enter Here <i class="fas fa-chevron-right"></i></a>
-</header>
+{% block content %}
+  <header class="showcase hero">
+    <video
+      class="video"
+      src="{% static 'img/splash_video.mp4' %}"
+      muted
+      loop
+      autoplay
+      playsinline
+      preload="metadata"
+      aria-hidden="true"
+    ></video>
+    <div class="hero-overlay"></div>
+    <div class="content-wide hero-inner">
+      <p class="eyebrow">Research desk</p>
+      <h1>LLK Investment Research</h1>
+      <p class="hero-copy">
+        Independent market notes across macro, digital assets, commodities, and options strategy.
+      </p>
+      <div class="hero-actions">
+        <a href="{% url 'blog' %}" class="btn btn-primary">Read MacroView</a>
+        <a href="{% url 'market_analyzer' %}" class="btn btn-secondary">Explore the analyzer</a>
+      </div>
+    </div>
+  </header>
 
-<!-- <section class="about-me">
-            <h1 class="title">About Me</h1>
-            <div class="txt-img">
-                <p>My name is Konrad Kadzielawa. I am currently employed as a Senior Analyst at Epsilon, a digital advertising company. My main interests lie at the intersection of data science & finance. This site is meant to provide readers with a variety
-                    of investment strategies, my personal analysis, analytic tools etc. in order to enable a retail investor, as you and I, to make wiser investment choices.
-                </p>
-                <img src="/img/personal_photo.png" alt="">
-            </div>
-        </section> -->
+  <section class="section home-overview">
+    <div class="content-wide overview-grid">
+      <div>
+        <p class="section-label">Coverage</p>
+        <h2>Structured notes for investors who want signal, not noise.</h2>
+      </div>
+      <div class="focus-list">
+        <article class="focus-item">
+          <p class="focus-number">01</p>
+          <h3>MacroView</h3>
+          <p>Research commentary built around market regime, liquidity, and cross-asset context.</p>
+        </article>
+        <article class="focus-item">
+          <p class="focus-number">02</p>
+          <h3>MicroView</h3>
+          <p>Single-name and sector-level notes focused on company structure, earnings quality, and catalyst framing.</p>
+        </article>
+        <article class="focus-item">
+          <p class="focus-number">03</p>
+          <h3>Options study</h3>
+          <p>Practical trading setups with an emphasis on risk framing rather than hype.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-links">
+    <div class="content-wide section-grid">
+      <article class="section-card">
+        <p class="section-label">New page</p>
+        <h2>MicroView blog</h2>
+        <p>Short-form equity and industry notes for bottom-up work.</p>
+        <a class="text-link" href="{% url 'microview_blog' %}">Open MicroView</a>
+      </article>
+      <article class="section-card">
+        <p class="section-label">New page</p>
+        <h2>Options study</h2>
+        <p>Scenario planning, trade construction, and structured risk review.</p>
+        <a class="text-link" href="{% url 'options_study' %}">Open Options Study</a>
+      </article>
+      <article class="section-card">
+        <p class="section-label">New page</p>
+        <h2>Market analyzer</h2>
+        <p>A future home for screening, valuation snapshots, and market dashboards.</p>
+        <a class="text-link" href="{% url 'market_analyzer' %}">Open Market Analyzer</a>
+      </article>
+    </div>
+  </section>
 {% endblock content %}

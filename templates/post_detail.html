@@ -1,7 +1,23 @@
-{% extends 'base.html' %} {% block content %}
-<a href="{% url 'blog' %}">Main Blog</a>
-<div>
-    <h2>{{ post.title }}</h2>
-    <p>{{ post.content | safe}}</p>
-</div>
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="page-shell article-shell">
+    <div class="content-narrow">
+      <a class="text-link back-link" href="{% url 'blog' %}">Back to MacroView</a>
+
+      <article class="article-detail">
+        <header class="article-header">
+          <p class="post-meta">
+            <span>{{ post.created_on|date:"M j, Y" }}</span>
+            <span>{{ post.author.get_full_name|default:post.author.username }}</span>
+          </p>
+          <h1>{{ post.title }}</h1>
+        </header>
+
+        <div class="article-prose">
+          {{ post.content|safe }}
+        </div>
+      </article>
+    </div>
+  </section>
 {% endblock content %}

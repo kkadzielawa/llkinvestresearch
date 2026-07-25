@@ -17,11 +17,21 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 
+from .views import (
+    ContactView,
+    HomeView,
+    MarketAnalyzerPageView,
+    MicroViewPageView,
+    OptionsStudyPageView,
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='home.html'), name='home'),
-    path('swing_trading/', TemplateView.as_view(template_name='swing_trading.html'),
-         name='swing_trading'),
-    path('contact/', TemplateView.as_view(template_name='contact.html'), name='contact'),
+    path('', HomeView.as_view(), name='home'),
+    path('microview/', MicroViewPageView.as_view(), name='microview_blog'),
+    path('options-study/', OptionsStudyPageView.as_view(), name='options_study'),
+    path('swing_trading/', OptionsStudyPageView.as_view(), name='swing_trading'),
+    path('market-analyzer/', MarketAnalyzerPageView.as_view(), name='market_analyzer'),
+    path('contact/', ContactView.as_view(), name='contact'),
     path('blog/', include('blog.urls')),
 ]

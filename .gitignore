@@ -21,3 +21,13 @@ data/
 #########
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
+
+# DJANGO RUNTIME #
+##################
+db.sqlite3
+staticfiles/
+*.log
+
+# LOCAL CONFIG #
+################
+.env
