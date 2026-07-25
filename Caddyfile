@@ -1,0 +1,12 @@
+{
+	email {$CADDY_EMAIL}
+}
+
+{$SITE_DOMAIN} {
+	redir https://{$WWW_DOMAIN}{uri} permanent
+}
+
+{$WWW_DOMAIN} {
+	encode gzip zstd
+	reverse_proxy web:8000
+}

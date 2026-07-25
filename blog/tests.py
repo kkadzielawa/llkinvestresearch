@@ -2,11 +2,11 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from .models import Post
+from .models import MicroViewEntry, OptionsStudyEntry, Post
 
 
 @override_settings(SECURE_SSL_REDIRECT=False)
-class PostVisibilityTests(TestCase):
+class MacroViewVisibilityTests(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
             username="konrad",
@@ -55,3 +55,75 @@ class PostVisibilityTests(TestCase):
         response = self.client.get(reverse("blog"))
         posts = list(response.context["posts"])
         self.assertEqual(posts[0], newer_post)
+
+
+@override_settings(SECURE_SSL_REDIRECT=False)
+class MicroViewVisibilityTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username="micro",
+            email="micro@example.com",
+            password="password123",
+        )
+        self.published_entry = MicroViewEntry.objects.create(
+            title="MicroView Note",
+            slug="microview-note",
+            author=self.user,
+            content="<p>Micro body</p>",
+            status=MicroViewEntry.PostStatus.PUBLISHED,
+        )
+        self.draft_entry = MicroViewEntry.objects.create(
+            title="MicroView Draft",
+            slug="microview-draft",
+            author=self.user,
+            content="<p>Draft micro body</p>",
+            status=MicroViewEntry.PostStatus.DRAFT,
+        )
+
+    def test_published_entry_appears_in_microview_list(self):
+        response = self.client.get(reverse("microview_blog"))
+        self.assertContains(response, self.published_entry.title)
+
+    def test_draft_entry_does_not_appear_in_microview_list(self):
+        response = self.client.get(reverse("microview_blog"))
+        self.assertNotContains(response, self.draft_entry.title)
+
+    def test_published_entry_detail_returns_200(self):
+        response = self.client.get(self.published_entry.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+
+
+@override_settings(SECURE_SSL_REDIRECT=False)
+class OptionsStudyVisibilityTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username="options",
+            email="options@example.com",
+            password="password123",
+        )
+        self.published_entry = OptionsStudyEntry.objects.create(
+            title="Options Study Note",
+            slug="options-study-note",
+            author=self.user,
+            content="<p>Options body</p>",
+            status=OptionsStudyEntry.PostStatus.PUBLISHED,
+        )
+        self.draft_entry = OptionsStudyEntry.objects.create(
+            title="Options Study Draft",
+            slug="options-study-draft",
+            author=self.user,
+            content="<p>Draft options body</p>",
+            status=OptionsStudyEntry.PostStatus.DRAFT,
+        )
+
+    def test_published_entry_appears_in_options_list(self):
+        response = self.client.get(reverse("options_study"))
+        self.assertContains(response, self.published_entry.title)
+
+    def test_draft_entry_does_not_appear_in_options_list(self):
+        response = self.client.get(reverse("options_study"))
+        self.assertNotContains(response, self.draft_entry.title)
+
+    def test_published_entry_detail_returns_200(self):
+        response = self.client.get(self.published_entry.get_absolute_url())
+        self.assertEqual(response.status_code, 200)

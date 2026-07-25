@@ -1,7 +1,12 @@
 import os
+from pathlib import Path
+
+import dj_database_url
+from dotenv import load_dotenv
 
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 
 def get_bool(name, default=False):
@@ -30,14 +35,13 @@ def get_int(name, default=0):
 
 SECRET_KEY = os.getenv(
     "SECRET_KEY",
-    "django-insecure-local-development-key-with-extra-entropy-2026-site-build",
+    "llkinvestresearch-local-dev-secret-key-2026-verify-before-production-8a7f3c2d9e",
 )
 DEBUG = get_bool("DEBUG", default=True)
 ALLOWED_HOSTS = get_list(
     "ALLOWED_HOSTS",
     ["127.0.0.1", "localhost", "llkinvestresearch.herokuapp.com"],
 )
-
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -66,7 +70,7 @@ ROOT_URLCONF = "llkinvestresearch.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -81,11 +85,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "llkinvestresearch.wsgi.application"
 
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    postgres_db = os.getenv("POSTGRES_DB", "llkinvestresearch")
+    postgres_user = os.getenv("POSTGRES_USER", "llkinvestresearch")
+    postgres_password = os.getenv("POSTGRES_PASSWORD", "llkinvestresearch")
+    postgres_host = os.getenv("POSTGRES_HOST", "127.0.0.1")
+    postgres_port = os.getenv("POSTGRES_PORT", "5432")
+    DATABASE_URL = (
+        f"postgres://{postgres_user}:{postgres_password}"
+        f"@{postgres_host}:{postgres_port}/{postgres_db}"
+    )
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, os.getenv("DATABASE_NAME", "db.sqlite3")),
-    }
+    "default": dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -106,13 +123,19 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
-USE_L10N = True
 USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+if DEBUG:
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+else:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+
+CSRF_TRUSTED_ORIGINS = get_list("CSRF_TRUSTED_ORIGINS", [])
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "research@llkinvest.local")
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", DEFAULT_FROM_EMAIL)
@@ -121,14 +144,16 @@ EMAIL_BACKEND = os.getenv(
     "django.core.mail.backends.console.EmailBackend",
 )
 
-if not DEBUG:
-    SECURE_SSL_REDIRECT = get_bool("SECURE_SSL_REDIRECT", default=True)
-    SESSION_COOKIE_SECURE = get_bool("SESSION_COOKIE_SECURE", default=True)
-    CSRF_COOKIE_SECURE = get_bool("CSRF_COOKIE_SECURE", default=True)
-    SECURE_REFERRER_POLICY = os.getenv("SECURE_REFERRER_POLICY", "same-origin")
-    SECURE_HSTS_SECONDS = get_int("SECURE_HSTS_SECONDS", default=31536000)
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = get_bool(
-        "SECURE_HSTS_INCLUDE_SUBDOMAINS",
-        default=True,
-    )
-    SECURE_HSTS_PRELOAD = get_bool("SECURE_HSTS_PRELOAD", default=True)
+SESSION_COOKIE_SECURE = get_bool("SESSION_COOKIE_SECURE", default=not DEBUG)
+CSRF_COOKIE_SECURE = get_bool("CSRF_COOKIE_SECURE", default=not DEBUG)
+SECURE_SSL_REDIRECT = get_bool("SECURE_SSL_REDIRECT", default=not DEBUG)
+SECURE_REFERRER_POLICY = os.getenv("SECURE_REFERRER_POLICY", "same-origin")
+SECURE_HSTS_SECONDS = get_int(
+    "SECURE_HSTS_SECONDS",
+    default=31536000 if not DEBUG else 0,
+)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = get_bool(
+    "SECURE_HSTS_INCLUDE_SUBDOMAINS",
+    default=not DEBUG,
+)
+SECURE_HSTS_PRELOAD = get_bool("SECURE_HSTS_PRELOAD", default=not DEBUG)

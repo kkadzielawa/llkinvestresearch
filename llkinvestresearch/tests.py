@@ -12,7 +12,8 @@ class ContactViewTests(TestCase):
     def test_get_renders_form(self):
         response = self.client.get(reverse("contact"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Send a message")
+        self.assertContains(response, "Konrad Kadzielawa")
+        self.assertContains(response, "Send message")
 
     def test_invalid_post_rerenders_errors(self):
         response = self.client.post(reverse("contact"), {"name": "", "email": "bad"})
