@@ -21,7 +21,7 @@
     <div class="site-shell">
       <header class="site-header">
         <div class="content-wide header-inner">
-          <a class="brand" href="{% url 'home' %}">
+          <a class="brand" href="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}">
             <img
               src="{% static 'img/logo.png' %}"
               alt="LLK Investment Research logo"
