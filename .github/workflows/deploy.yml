@@ -87,10 +87,13 @@ jobs:
             APP_DIR=${{ secrets.DO_APP_DIR }} ./scripts/deploy-production.sh
 
       - name: Smoke check production site
-        if: ${{ vars.PRODUCTION_URL != '' || secrets.PRODUCTION_URL != '' }}
         env:
-          PRODUCTION_URL: ${{ vars.PRODUCTION_URL != '' && vars.PRODUCTION_URL || secrets.PRODUCTION_URL }}
+          PRODUCTION_URL: ${{ secrets.PRODUCTION_URL || vars.PRODUCTION_URL }}
         run: |
+          if [ -z "$PRODUCTION_URL" ]; then
+            echo "PRODUCTION_URL not set; skipping smoke check."
+            exit 0
+          fi
           for attempt in $(seq 1 12); do
             if curl --fail --silent --show-error --location "$PRODUCTION_URL" >/dev/null; then
               exit 0
