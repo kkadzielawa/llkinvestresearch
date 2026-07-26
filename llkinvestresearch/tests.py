@@ -1,7 +1,34 @@
-from django.conf import settings
-from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
+
+
+@override_settings(SECURE_SSL_REDIRECT=False)
+class SEOTests(TestCase):
+    def test_homepage_has_specific_title(self):
+        response = self.client.get(reverse("home"))
+        self.assertContains(
+            response,
+            "<title>LLK Investment Research | Independent Market Notes</title>",
+            html=False,
+        )
+
+    def test_robots_txt_lists_sitemap(self):
+        response = self.client.get(reverse("robots_txt"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "User-agent: *")
+        self.assertContains(response, "Sitemap:")
+        self.assertContains(response, reverse("sitemap_xml"))
+
+    def test_sitemap_contains_public_pages(self):
+        response = self.client.get(reverse("sitemap_xml"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse("home"))
+        self.assertContains(response, reverse("blog"))
+        self.assertContains(response, reverse("contact"))
+
+
+from django.conf import settings
+from django.core import mail
 
 
 @override_settings(
