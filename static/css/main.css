@@ -14,6 +14,7 @@
   --shadow-soft: 0 18px 44px rgba(4, 8, 12, 0.28);
   --content-wide: min(1120px, calc(100vw - 3rem));
   --content-narrow: min(760px, calc(100vw - 3rem));
+  --header-height: 5.75rem;
 }
 
 * {
@@ -226,6 +227,7 @@ main {
 
 .flash-stack {
   padding-top: 1.25rem;
+  transition: opacity 240ms ease, transform 240ms ease;
 }
 
 .flash-message {
@@ -233,6 +235,11 @@ main {
   border: 1px solid var(--color-border);
   background: rgba(184, 138, 68, 0.1);
   color: var(--color-text);
+}
+
+.flash-stack.is-dismissing {
+  opacity: 0;
+  transform: translateY(-0.4rem);
 }
 
 .btn {
@@ -291,7 +298,8 @@ main {
 
 .showcase {
   position: relative;
-  min-height: min(82vh, 52rem);
+  min-height: calc(100vh - var(--header-height));
+  min-height: calc(100svh - var(--header-height));
   overflow: clip;
   background:
     radial-gradient(circle at top right, rgba(184, 138, 68, 0.18), transparent 32%),
@@ -322,8 +330,9 @@ main {
   z-index: 1;
   display: grid;
   align-content: end;
-  min-height: min(82vh, 52rem);
-  padding: 8rem 0 5rem;
+  min-height: calc(100vh - var(--header-height));
+  min-height: calc(100svh - var(--header-height));
+  padding: 5rem 0 4.5rem;
 }
 
 .hero h1,
@@ -739,6 +748,10 @@ main {
 }
 
 @media (max-width: 720px) {
+  :root {
+    --header-height: 5rem;
+  }
+
   .header-inner {
     min-height: 5rem;
   }
@@ -753,8 +766,7 @@ main {
   }
 
   .hero-inner {
-    min-height: min(76vh, 44rem);
-    padding: 6.25rem 0 3.25rem;
+    padding: 4.5rem 0 3.25rem;
   }
 
   .hero h1 {
@@ -806,13 +818,15 @@ main {
   }
 
   .showcase {
-    min-height: min(70vh, 38rem);
+    min-height: calc(100vh - var(--header-height));
+    min-height: calc(100svh - var(--header-height));
   }
 
   .hero-inner {
-    min-height: min(70vh, 38rem);
+    min-height: calc(100vh - var(--header-height));
+    min-height: calc(100svh - var(--header-height));
     align-content: end;
-    padding: 5.75rem 0 2.4rem;
+    padding: 4rem 0 2.4rem;
   }
 
   .hero h1 {
@@ -829,7 +843,6 @@ main {
 
   .video {
     object-position: 68% center;
-    transform: scale(1.06);
   }
 
   .hero-overlay {
@@ -859,12 +872,14 @@ main {
 
 @media (max-width: 380px) {
   .showcase {
-    min-height: min(66vh, 34rem);
+    min-height: calc(100vh - var(--header-height));
+    min-height: calc(100svh - var(--header-height));
   }
 
   .hero-inner {
-    min-height: min(66vh, 34rem);
-    padding: 5.4rem 0 2rem;
+    min-height: calc(100vh - var(--header-height));
+    min-height: calc(100svh - var(--header-height));
+    padding: 3.5rem 0 2rem;
   }
 
   .hero h1 {
@@ -877,6 +892,5 @@ main {
 
   .video {
     object-position: 72% center;
-    transform: scale(1.1);
   }
 }

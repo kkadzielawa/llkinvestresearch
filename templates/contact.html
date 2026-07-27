@@ -25,11 +25,12 @@
       <div class="contact-form-wrap">
         <form method="post" class="contact-form">
           {% csrf_token %}
+          {{ form.website }}
           {% if form.non_field_errors %}
             <div class="form-errors">{{ form.non_field_errors }}</div>
           {% endif %}
 
-          {% for field in form %}
+          {% for field in form.visible_fields %}
             <div class="form-field">
               <label for="{{ field.id_for_label }}">{{ field.label }}</label>
               {{ field }}

@@ -144,6 +144,13 @@ EMAIL_BACKEND = os.getenv(
     "EMAIL_BACKEND",
     "django.core.mail.backends.console.EmailBackend",
 )
+EMAIL_HOST = os.getenv("EMAIL_HOST", "")
+EMAIL_PORT = get_int("EMAIL_PORT", 587)
+EMAIL_USE_TLS = get_bool("EMAIL_USE_TLS", True)
+EMAIL_TIMEOUT = get_int("EMAIL_TIMEOUT", 10)
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+CONTACT_FORM_RECIPIENTS = get_list("CONTACT_FORM_RECIPIENTS", [CONTACT_EMAIL])
 
 SESSION_COOKIE_SECURE = get_bool("SESSION_COOKIE_SECURE", default=not DEBUG)
 CSRF_COOKIE_SECURE = get_bool("CSRF_COOKIE_SECURE", default=not DEBUG)

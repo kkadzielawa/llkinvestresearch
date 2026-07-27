@@ -1,3 +1,7 @@
+from unittest.mock import patch
+
+from django.conf import settings
+from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -27,10 +31,6 @@ class SEOTests(TestCase):
         self.assertContains(response, reverse("contact"))
 
 
-from django.conf import settings
-from django.core import mail
-
-
 @override_settings(
     EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
     SECURE_SSL_REDIRECT=False,
@@ -51,7 +51,7 @@ class ContactViewTests(TestCase):
             "This field is required.",
         )
 
-    @override_settings(CONTACT_EMAIL="editor@example.com")
+    @override_settings(CONTACT_FORM_RECIPIENTS=["editor@example.com"])
     def test_valid_post_sends_mail(self):
         response = self.client.post(
             reverse("contact"),
@@ -65,5 +65,51 @@ class ContactViewTests(TestCase):
         )
         self.assertRedirects(response, reverse("contact"))
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, [settings.CONTACT_EMAIL])
+        self.assertEqual(mail.outbox[0].to, settings.CONTACT_FORM_RECIPIENTS)
+        self.assertEqual(mail.outbox[0].reply_to, ["visitor@example.com"])
+        self.assertIn("Visitor", mail.outbox[0].body)
+        self.assertIn("555-0101", mail.outbox[0].body)
         self.assertContains(response, "Your note has been sent successfully")
+
+    def test_honeypot_submission_does_not_send_mail(self):
+        response = self.client.post(
+            reverse("contact"),
+            {
+                "name": "Spam Sender",
+                "email": "spam@example.com",
+                "phone": "555-0101",
+                "message": "This message is long enough to pass validation.",
+                "website": "https://example.com",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(mail.outbox), 0)
+
+    @patch("llkinvestresearch.views.logger.exception")
+    @patch(
+        "llkinvestresearch.views.EmailMessage.send",
+        side_effect=OSError("SMTP timeout"),
+    )
+    def test_email_failure_rerenders_form_with_error(
+        self,
+        mock_send,
+        mock_logger_exception,
+    ):
+        response = self.client.post(
+            reverse("contact"),
+            {
+                "name": "Visitor",
+                "email": "visitor@example.com",
+                "phone": "555-0101",
+                "message": "Hello from the site.",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Sorry, your message could not be sent.")
+        self.assertEqual(len(mail.outbox), 0)
+        mock_send.assert_called_once_with(fail_silently=False)
+        mock_logger_exception.assert_called_once_with(
+            "Contact form email delivery failed"
+        )
