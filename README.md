@@ -80,6 +80,22 @@ POSTGRES_USER=llkinvestresearch
 POSTGRES_PASSWORD=replace-db-password
 ```
 
+Contact form email delivery also requires SMTP settings. For Brevo, use your
+Brevo SMTP login and SMTP key:
+
+```env
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp-relay.brevo.com
+EMAIL_PORT=2525
+EMAIL_USE_TLS=True
+EMAIL_TIMEOUT=10
+EMAIL_HOST_USER=your-brevo-smtp-login
+EMAIL_HOST_PASSWORD=your-brevo-smtp-key
+DEFAULT_FROM_EMAIL=LLK Investment Research <verified-sender@example.com>
+CONTACT_EMAIL=konrad@example.com
+CONTACT_FORM_RECIPIENTS=konrad@example.com
+```
+
 ## CI/CD
 
 This repo includes a GitHub Actions workflow at `.github/workflows/deploy.yml` that runs on pushes to the `deploy` branch and on manual dispatch.
