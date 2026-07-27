@@ -1,14 +1,18 @@
 import json
+import logging
 
 from django.conf import settings
 from django.contrib import messages
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse_lazy
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
 
 from .forms import ContactForm
+
+
+logger = logging.getLogger(__name__)
 
 
 class SEOContextMixin:
@@ -115,14 +119,30 @@ class ContactView(SEOContextMixin, FormView):
             f"Phone: {phone}\n\n"
             f"{cleaned_data['message']}"
         )
-        send_mail(
+        email = EmailMessage(
             subject=f"Website inquiry from {cleaned_data['name']}",
-            message=body,
+            body=body,
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[settings.CONTACT_EMAIL],
+            to=settings.CONTACT_FORM_RECIPIENTS,
+            reply_to=[cleaned_data["email"]],
         )
+
+        try:
+            email.send(fail_silently=False)
+        except Exception:
+            logger.exception("Contact form email delivery failed")
+            messages.error(
+                self.request,
+                "Sorry, your message could not be sent. Please try again later.",
+            )
+            return self.render_to_response(self.get_context_data(form=form))
+
         messages.success(
             self.request,
             "Thanks for reaching out. Your note has been sent successfully.",
         )
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Please fix the highlighted fields and try again.")
+        return super().form_invalid(form)
